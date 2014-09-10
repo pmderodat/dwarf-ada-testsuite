@@ -1,0 +1,8 @@
+*.o
+*.s
+*.gnatdt
+*.ali
+b~*.adb
+*.dot
+*.png
+*.gnatg
