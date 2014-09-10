@@ -3,6 +3,7 @@
 *.gnatdt
 *.ali
 b~*.adb
+b~*.ads
 *.dot
 *.png
 *.gnatg
