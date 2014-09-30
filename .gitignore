@@ -7,3 +7,5 @@ b~*.ads
 *.dot
 *.png
 *.gnatg
+*.tar.gz
+*.tar.bz2
