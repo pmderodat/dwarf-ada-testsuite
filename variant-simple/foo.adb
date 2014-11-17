@@ -11,29 +11,17 @@ procedure Foo is
       end case;
    end record;
 
-   function Get (I : Integer) return Rec_Type is
-   begin
-     case I is
-        when 0       => return (I => 0, B => True);
-        when 1 .. 10 => return R : Rec_Type (I) do
-                           R.B := True;
-                           R.C := 'A';
-                        end return;
-        when others  => return (I => 12, B => True,  N => abs I);
-     end case;
-   end Get;
-
    procedure Nop (R : Rec_Type) is
    begin
       null;
    end Nop;
 
-   R0 : constant Rec_Type := Get (0);
-   R1 : constant Rec_Type := Get (1);
-   R11 : constant Rec_Type := Get (11);
+   R0 : constant Rec_Type := (I => 0, B => True);
+   R2 : constant Rec_Type := (I => 2, B => True, C => 'A');
+   R11 : constant Rec_Type := (I => 11, B => True, n => 11);
 
 begin
    Nop (R0);
-   Nop (R1);
+   Nop (R2);
    Nop (R11);
 end Foo;
