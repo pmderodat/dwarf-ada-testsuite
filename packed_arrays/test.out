@@ -1,0 +1,11 @@
+foo__T10b: stride = 6
+foo__T29b: stride = 4
+foo__T6b: no stride
+foo__T8b: stride = 6
+foo__Tpspt_longS: stride = 4
+foo__array_type: no stride
+foo__bit_field_type: stride = 1
+foo__half_bit_field_type: stride = 1
+foo__packed_array_type: stride = 6
+foo__packed_several_packed_type: stride = 4
+foo__word_bit_field_type: stride = 1
