@@ -48,4 +48,5 @@ begin
    Discard (A2 (1));
    Discard (A3 (1));
    Discard (A4 (1));
+   Put_Line (Float'Image (Float (A1 (2)) * 10.0));
 end Foo;
