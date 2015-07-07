@@ -108,6 +108,11 @@ def parse_type_prefixes(die):
     return (prefixes, type_die)
 
 
+def peel_typedef(cu, die):
+    assert_eq(die.tag, 'DW_TAG_typedef')
+    return attr_die(cu, die, 'DW_AT_type')
+
+
 def subrange_root(subrange_die):
     assert subrange_die.tag == 'DW_TAG_subrange_type'
     base_type = subrange_die
