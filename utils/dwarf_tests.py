@@ -194,6 +194,14 @@ def match_expr(expr, pattern):
     return matches
 
 
+def match_dwarf_proc(cu, die_or_offset, pattern):
+    die = (find_die_by_offset(cu, die_or_offset)
+           if isinstance(die_or_offset, int) else
+           die_or_offset)
+    assert_eq(die.tag, 'DW_TAG_dwarf_procedure')
+    return match_expr(attr_expr(cu, die, 'DW_AT_location'), pattern)
+
+
 def subrange_root(subrange_die):
     assert subrange_die.tag == 'DW_TAG_subrange_type'
     base_type = subrange_die

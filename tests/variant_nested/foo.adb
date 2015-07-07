@@ -10,7 +10,7 @@ procedure Foo is
             case I2 is
                when 0 =>
                   null;
-               when 2 .. 20 =>
+               when 2 .. 20 | 22 =>
                   C : Character;
                when others =>
                   N2 : Natural;
