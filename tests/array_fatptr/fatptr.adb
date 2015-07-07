@@ -1,23 +1,16 @@
 with Ada.Text_IO; use Ada.Text_IO;
 
-procedure XUT is
+procedure Fatptr is
    type Array_Type is array (Natural range <>) of Integer;
-   type Array_Access is access all Array_Type;
-   for Array_Access'Size use 64;
+   type Array_Access is access Array_Type;
 
-   procedure Put_Line (AA : Array_Access);
-   procedure Discard (A : Array_Type) is
-   begin
-      null;
-   end Discard;
+   procedure Put_Line (A : Array_Type);
 
    --------------
    -- Put_Line --
    --------------
 
-   procedure Put_Line (AA : Array_Access) is
-      B : constant Natural := AA.all'First;
-      A : Array_Type renames AA.all;
+   procedure Put_Line (A : Array_Type) is
       I : Natural := 0;
    begin
       Put ('(');
@@ -33,8 +26,9 @@ procedure XUT is
       Put_Line (")");
    end Put_Line;
 
+   A : Array_Type (1 .. 5) := (1, 2, 3, 4, 5);
    B : Array_Access := new Array_Type'(0 .. 6 => -1);
 begin
-   Discard (B.all);
-   Put_Line (B);
-end XUT;
+   Put_Line (A);
+   Put_Line (B.all);
+end Fatptr;

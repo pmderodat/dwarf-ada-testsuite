@@ -1,7 +1,18 @@
+import os
 import subprocess
 
 import elftools.elf.elffile
 import elftools.dwarf.die
+import elftools.dwarf.dwarf_expr
+
+
+processor = os.uname()[4]
+if processor in ('i386', 'i486', 'i586', 'i686', 'x86'):
+    PTR_BYTE_SIZE = 4
+elif processor in ('x86_64', ):
+    PTR_BYTE_SIZE = 8
+else:
+    assert False, 'Unknown processor: {}'.format(processor)
 
 
 def gnatmake(main):
@@ -94,6 +105,31 @@ def attr_die(cu, die, attr_name):
                 attr_name
             )
         )
+
+
+class DWARFExpressionDecoder(elftools.dwarf.dwarf_expr.GenericExprVisitor):
+    def __init__(self, structs):
+        super(DWARFExpressionDecoder, self).__init__(structs)
+        self.result = []
+
+    def _after_visit(self, opcode, opcode_name, args):
+        self.result.append(tuple([opcode_name] + list(args)))
+
+
+def attr_expr(cu, die, attr_name):
+    try:
+        attr = die.attributes[attr_name]
+    except KeyError as exc:
+        raise KeyError('{} has no {} attribute'.format(
+            custom_str(die), attr_name
+        ))
+    assert attr.form == 'DW_FORM_exprloc', (
+        'Invalid/unsupported form for a DWARF expression: {}'.format(attr.form)
+    )
+
+    decoder = DWARFExpressionDecoder(cu.structs)
+    decoder.process_expr(attr.value)
+    return decoder.result
 
 
 def parse_type_prefixes(die):

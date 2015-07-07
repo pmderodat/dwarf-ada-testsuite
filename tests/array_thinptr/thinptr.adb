@@ -1,16 +1,23 @@
 with Ada.Text_IO; use Ada.Text_IO;
 
-procedure Foo is
+procedure Thinptr is
    type Array_Type is array (Natural range <>) of Integer;
-   type Array_Access is access Array_Type;
+   type Array_Access is access all Array_Type;
+   for Array_Access'Size use 64;
 
-   procedure Put_Line (A : Array_Type);
+   procedure Put_Line (AA : Array_Access);
+   procedure Discard (A : Array_Type) is
+   begin
+      null;
+   end Discard;
 
    --------------
    -- Put_Line --
    --------------
 
-   procedure Put_Line (A : Array_Type) is
+   procedure Put_Line (AA : Array_Access) is
+      B : constant Natural := AA.all'First;
+      A : Array_Type renames AA.all;
       I : Natural := 0;
    begin
       Put ('(');
@@ -26,9 +33,8 @@ procedure Foo is
       Put_Line (")");
    end Put_Line;
 
-   A : Array_Type (1 .. 5) := (1, 2, 3, 4, 5);
    B : Array_Access := new Array_Type'(0 .. 6 => -1);
 begin
-   Put_Line (A);
-   Put_Line (B.all);
-end Foo;
+   Discard (B.all);
+   Put_Line (B);
+end Thinptr;
