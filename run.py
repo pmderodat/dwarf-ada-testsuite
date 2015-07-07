@@ -18,9 +18,15 @@ def indent(text):
 def run_test(test_file):
     test_name = os.path.dirname(test_file)
     with open(os.devnull, 'r') as devnull:
+        env = dict(os.environ)
+        if 'PYTHONPATH' in env:
+            env['PYTHONPATH'] = '{}:{}'.format(os.getcwd(), env['PYTHONPATH'])
+        else:
+            env['PYTHONPATH'] = '{}'.format(os.getcwd())
         p = subprocess.Popen(
             [sys.executable, os.path.abspath(test_file)],
              cwd=os.path.dirname(test_file),
+             env=env,
              stdin=devnull, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         stdout, stderr = p.communicate()
