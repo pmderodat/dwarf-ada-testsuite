@@ -65,6 +65,15 @@ def find_die(die, tag=None, name=None):
     return result
 
 
+def find_die_by_offset(cu, offset):
+    for die in cu.iter_DIEs():
+        if die.offset == offset:
+            return die
+        elif die.offset > offset:
+            break
+    assert False, 'No DIE at {:#x}'.format(offset)
+
+
 def die_children(die):
     return die._children
 
@@ -96,15 +105,7 @@ def attr_die(cu, die, attr_name):
             )
         )
 
-    for ref_die in cu.iter_DIEs():
-        if ref_die.offset == offset:
-            return ref_die
-        assert ref_die.offset < offset, (
-            '{}: could not find the DIE referenced by the {} attribute'.format(
-                custom_str(die),
-                attr_name
-            )
-        )
+    return find_die_by_offset(cu, offset)
 
 
 class DWARFExpressionDecoder(elftools.dwarf.dwarf_expr.GenericExprVisitor):
@@ -147,6 +148,50 @@ def parse_type_prefixes(die):
 def peel_typedef(cu, die):
     assert_eq(die.tag, 'DW_TAG_typedef')
     return attr_die(cu, die, 'DW_AT_type')
+
+
+
+class Match(object):
+    """Class used to match patterns in DWARF expression: see match_expr."""
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return 'Match({})'.format(self.name)
+
+def match_expr(expr, pattern):
+    """
+    Match a DWARF expression against the input pattern. Raise a ValueError when
+    there is a mismatch. For instance:
+
+        >>> matches = match_expr(expr, [('DW_OP_deref_size', 4),
+                                        ('DW_OP_call4', Match('call1')),
+                                        ('DW_OP_call4', Match('call2')),
+                                        ('DW_OP_plus_uconst', 1)])
+        >>> a = matches['call1']
+
+    Match instances can only appear as operands.
+    """
+    matches = {}
+    if len(expr) != len(pattern):
+        raise ValueError('Input expression has {} operations'
+                         ' ({} expected)'.format(len(expr), len(pattern)))
+    for i, (got_op, pattern_op) in enumerate(
+            zip(expr, pattern)):
+        error = len(got_op) != len(pattern_op) or got_op[0] != pattern_op[0]
+        if not error:
+            for got_arg, pattern_arg in zip(got_op, pattern_op):
+                if isinstance(pattern_arg, Match):
+                    matches[pattern_arg.name] = got_arg
+                elif got_arg != pattern_arg:
+                    error = True
+                    break
+        if error:
+            raise ValueError('Could not match operation {}:'
+                             ' got {} ({} expected)'.format(
+                                 i, got_op, pattern_op))
+    return matches
 
 
 def subrange_root(subrange_die):
