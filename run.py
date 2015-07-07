@@ -41,8 +41,8 @@ def run_test(test_file):
 
 
 def main(args):
-    for child in os.listdir('.'):
-        test_file = os.path.join(child, 'test.py')
+    for child in os.listdir('tests'):
+        test_file = os.path.join('tests', child, 'test.py')
         if os.path.isfile(test_file):
             run_test(test_file)
 
