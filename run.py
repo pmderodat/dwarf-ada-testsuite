@@ -8,7 +8,9 @@ import sys
 
 # Move to the testsuite's root directory and setup paths
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(os.getcwd())
+
+lib_path = os.path.abspath('utils')
+sys.path.append(lib_path)
 
 
 def indent(text):
@@ -20,9 +22,9 @@ def run_test(test_file):
     with open(os.devnull, 'r') as devnull:
         env = dict(os.environ)
         if 'PYTHONPATH' in env:
-            env['PYTHONPATH'] = '{}:{}'.format(os.getcwd(), env['PYTHONPATH'])
+            env['PYTHONPATH'] = '{}:{}'.format(lib_path, env['PYTHONPATH'])
         else:
-            env['PYTHONPATH'] = '{}'.format(os.getcwd())
+            env['PYTHONPATH'] = '{}'.format(lib_path)
         p = subprocess.Popen(
             [sys.executable, os.path.abspath(test_file)],
              cwd=os.path.dirname(test_file),
