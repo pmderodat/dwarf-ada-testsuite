@@ -43,13 +43,18 @@ def run_test(test_file):
 
 
 def main(args):
-    for child in os.listdir('tests'):
-        test_file = os.path.join('tests', child, 'test.py')
+    test_list = args or (os.path.join('tests', d) for d in os.listdir('tests'))
+    one_test_run = False
+    for child in test_list:
+        test_file = os.path.join(child, 'test.py')
         if os.path.isfile(test_file):
+            one_test_run = True
             run_test(test_file)
+    if not one_test_run:
+        print('Warning: no test run')
 
 if __name__ == '__main__':
     try:
-        main(None)
+        main(sys.argv[1:])
     except KeyboardInterrupt:
         sys.exit(1)
