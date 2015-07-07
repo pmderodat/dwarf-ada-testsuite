@@ -9,7 +9,9 @@ def gnatmake(main):
     Run gnatmake for minimal GNAT encodings on `main`.
     """
     subprocess.check_call(
-        ['gnatmake', '-f', '-q', '-g', '-fgnat-encodings=minimal', main]
+        ['gcc', '-c',
+         '-g', '-fgnat-encodings=minimal',
+         main]
     )
 
 
