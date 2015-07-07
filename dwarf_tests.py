@@ -111,7 +111,7 @@ def subrange_root(subrange_die):
     base_type = subrange_die
     while base_type.tag == 'DW_TAG_subrange_type':
         base_type = attr_die(base_type.cu, base_type, 'DW_AT_type')
-    assert base_type.tag == 'DW_TAG_base_type'
+    assert base_type.tag in ('DW_TAG_base_type', 'DW_TAG_enumeration_type')
     return base_type
 
 
