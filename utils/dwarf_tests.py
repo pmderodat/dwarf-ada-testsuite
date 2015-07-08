@@ -15,6 +15,9 @@ else:
     assert False, 'Unknown processor: {}'.format(processor)
 
 
+DW_AT_GNU_bias = 0x2305
+
+
 def gnatmake(main):
     """
     Run gnatmake for minimal GNAT encodings on `main`.
