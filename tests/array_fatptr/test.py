@@ -16,9 +16,9 @@ assert_eq((array_type.tag, array_type.attributes['DW_AT_name'].value),
 
 
 # Check that the data location is correct.
-assert_eq(attr_expr(cu, array_type, 'DW_AT_data_location'),
-          [('DW_OP_push_object_address', ),
-           ('DW_OP_deref', )])
+match_expr(attr_expr(cu, array_type, 'DW_AT_data_location'),
+           [('DW_OP_push_object_address', ),
+            ('DW_OP_deref', )])
 
 
 # Now check that its range is the subrange we expect
@@ -26,15 +26,15 @@ assert_eq(len(die_children(array_type)), 1)
 array_range = die_child(array_type, 0)
 assert_eq(subrange_root(array_range).attributes['DW_AT_name'].value, 'integer')
 
-assert_eq(attr_expr(cu, array_range, 'DW_AT_lower_bound'),
-          [('DW_OP_push_object_address', ),
-           ('DW_OP_plus_uconst', PTR_BYTE_SIZE),
-           ('DW_OP_deref', ),
-           ('DW_OP_deref_size', 4)])
+match_expr(attr_expr(cu, array_range, 'DW_AT_lower_bound'),
+           [('DW_OP_push_object_address', ),
+            ('DW_OP_plus_uconst', PTR_BYTE_SIZE),
+            ('DW_OP_deref', ),
+            make_deref_expr(4)])
 
-assert_eq(attr_expr(cu, array_range, 'DW_AT_upper_bound'),
-          [('DW_OP_push_object_address', ),
-           ('DW_OP_plus_uconst', PTR_BYTE_SIZE),
-           ('DW_OP_deref', ),
-           ('DW_OP_plus_uconst', 4),
-           ('DW_OP_deref_size', 4)])
+match_expr(attr_expr(cu, array_range, 'DW_AT_upper_bound'),
+           [('DW_OP_push_object_address', ),
+            ('DW_OP_plus_uconst', PTR_BYTE_SIZE),
+            ('DW_OP_deref', ),
+            ('DW_OP_plus_uconst', 4),
+            make_deref_expr(4)])

@@ -5,6 +5,16 @@ gnatmake('foo.adb')
 cu, root = get_dwarf('foo.o')
 
 
+# TODO: in 32-bit, the compiler generates big unsigned literals instead of
+# small negative ones. This should be fixed.
+def make_litneg_expr(lit):
+    assert lit < 0
+    if PTR_BYTE_SIZE == 8:
+        return ('DW_OP_const1s', lit)
+    else:
+        return ('DW_OP_const4u', lit & (2**32 - 1))
+
+
 foo = find_die(root, 'DW_TAG_subprogram', 'foo')
 rec_type = find_die(foo, 'DW_TAG_structure_type', 'foo__rec_type')
 
@@ -29,10 +39,10 @@ assert_eq((prefixes, r_type),
 
 matches = match_expr(attr_expr(cu, rec_type, 'DW_AT_byte_size'),
                      [('DW_OP_push_object_address', ),
-                      ('DW_OP_deref_size', 4),
+                      make_deref_expr(4),
                       ('DW_OP_call4', Match('call')),
                       ('DW_OP_plus_uconst', 11),
-                      ('DW_OP_const1s', -4),
+                      make_litneg_expr(-4),
                       ('DW_OP_and', )])
 dwarf_proc = find_die_by_offset(cu, matches['call'])
 assert_eq(dwarf_proc.tag, 'DW_TAG_dwarf_procedure')

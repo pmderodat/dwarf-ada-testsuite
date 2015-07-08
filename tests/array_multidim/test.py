@@ -32,25 +32,25 @@ assert_eq(attr_expr(cu, range1, 'DW_AT_lower_bound'),
           [('DW_OP_push_object_address', ),
            ('DW_OP_plus_uconst', PTR_BYTE_SIZE),
            ('DW_OP_deref', ),
-           ('DW_OP_deref_size', 4)])
+           make_deref_expr(4)])
 
 assert_eq(attr_expr(cu, range1, 'DW_AT_upper_bound'),
           [('DW_OP_push_object_address', ),
            ('DW_OP_plus_uconst', PTR_BYTE_SIZE),
            ('DW_OP_deref', ),
            ('DW_OP_plus_uconst', 4),
-           ('DW_OP_deref_size', 4)])
+           make_deref_expr(4)])
 
 assert_eq(attr_expr(cu, range2, 'DW_AT_lower_bound'),
           [('DW_OP_push_object_address', ),
            ('DW_OP_plus_uconst', PTR_BYTE_SIZE),
            ('DW_OP_deref', ),
            ('DW_OP_plus_uconst', 8),
-           ('DW_OP_deref_size', 4)])
+           make_deref_expr(4)])
 
 assert_eq(attr_expr(cu, range2, 'DW_AT_upper_bound'),
           [('DW_OP_push_object_address', ),
            ('DW_OP_plus_uconst', PTR_BYTE_SIZE),
            ('DW_OP_deref', ),
            ('DW_OP_plus_uconst', 12),
-           ('DW_OP_deref_size', 4)])
+           make_deref_expr(4)])

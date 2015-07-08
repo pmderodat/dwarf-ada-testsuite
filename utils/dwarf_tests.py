@@ -6,13 +6,16 @@ import elftools.dwarf.die
 import elftools.dwarf.dwarf_expr
 
 
-processor = os.uname()[4]
-if processor in ('i386', 'i486', 'i586', 'i686', 'x86'):
-    PTR_BYTE_SIZE = 4
-elif processor in ('x86_64', ):
-    PTR_BYTE_SIZE = 8
-else:
-    assert False, 'Unknown processor: {}'.format(processor)
+def set_proc(processor):
+    global PTR_BYTE_SIZE
+    if processor in ('i386', 'i486', 'i586', 'i686', 'x86'):
+        PTR_BYTE_SIZE = 4
+    elif processor in ('x86_64', ):
+        PTR_BYTE_SIZE = 8
+    else:
+        assert False, 'Unknown processor: {}'.format(processor)
+
+set_proc(os.environ.get('PROC', os.uname()[4]))
 
 
 DW_AT_GNU_bias = 0x2305
@@ -134,6 +137,12 @@ def attr_expr(cu, die, attr_name):
     decoder = DWARFExpressionDecoder(cu.structs)
     decoder.process_expr(attr.value)
     return decoder.result
+
+
+def make_deref_expr(size):
+    return (('DW_OP_deref', )
+            if size == PTR_BYTE_SIZE else
+            ('DW_OP_deref_size', size))
 
 
 def parse_type_prefixes(die):

@@ -3,7 +3,7 @@ with Ada.Text_IO; use Ada.Text_IO;
 procedure Thinptr is
    type Array_Type is array (Natural range <>) of Integer;
    type Array_Access is access all Array_Type;
-   for Array_Access'Size use 64;
+   for Array_Access'Size use Standard'Address_Size;
 
    procedure Put_Line (AA : Array_Access);
    procedure Discard (A : Array_Type) is
