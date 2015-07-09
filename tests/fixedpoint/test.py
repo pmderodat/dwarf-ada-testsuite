@@ -55,23 +55,34 @@ def check_fp_array(var_name,
 
     # Check first the subrange.
     fp_type = attr_die(cu, array_type, 'DW_AT_type')
+    base_type = subrange_root(fp_type)
     assert_eq((fp_type.tag, fp_type.attributes['DW_AT_name'].value),
               ('DW_TAG_subrange_type', subrange_name))
-    assert_eq(fp_type.attributes['DW_AT_lower_bound'].value, bounds[0])
-    assert_eq(fp_type.attributes['DW_AT_upper_bound'].value, bounds[1])
+
+    def check_bound(name, value):
+        # Depending on the form of the bound, we might get an unsigned encoding
+        # even for negative bounds: match these as well.
+        if value < 0:
+            byte_size = base_type.attributes['DW_AT_byte_size'].value
+            accepted_values = (value, 2**(8 * byte_size) + value)
+        else:
+            accepted_values = (value, )
+        assert_in(fp_type.attributes[name].value, accepted_values)
+
+    check_bound('DW_AT_lower_bound', bounds[0])
+    check_bound('DW_AT_upper_bound', bounds[1])
 
     # Then check the subtype.
-    base_type = subrange_root(fp_type)
     assert_eq((base_type.tag, base_type.attributes['DW_AT_name'].value),
               ('DW_TAG_base_type', base_name))
     matcher.match(cu, base_type)
 
 
 check_fp_array('a1',
-               'foo__fp1_type', (240, 16),
+               'foo__fp1_type', (-16, 16),
                'foo__Tfp1_typeB', BinaryScaleMatcher(-4))
 check_fp_array('a2',
-               'foo__fp2_type', (0xffffa50cef85c001, 0x5af3107a3fff),
+               'foo__fp2_type', (-99999999999999, 99999999999999),
                'foo__Tfp2_typeB', DecimalScaleMatcher(-2))
 check_fp_array('a3',
                'foo__fp3_type', (0, 30),

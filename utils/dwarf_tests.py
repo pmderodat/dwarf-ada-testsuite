@@ -253,6 +253,12 @@ def assert_eq(value1, value2):
     assert value1 == value2, '{} != {}'.format(custom_str(value1),
                                                custom_str(value2))
 
+def assert_in(value, accepted_values):
+    assert value in accepted_values, '{} not in {}'.format(
+        custom_str(value),
+        '{{{}}}'.format(', '.join(custom_str(v) for v in accepted_values))
+    )
+
 def assert_no_attr(die, attr_name):
     assert attr_name not in die.attributes, (
         'Expected no {} attribute in {} but found one'.format(
