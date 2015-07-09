@@ -1,5 +1,3 @@
-with Ada.Text_IO; use Ada.Text_IO;
-
 procedure Foo is
    type FP1_Type is delta 0.1 range -1.0 .. +1.0; --  Ordinary
    type FP2_Type is delta 0.01 digits 14;         --  Decimal
@@ -48,5 +46,4 @@ begin
    Discard (A2 (1));
    Discard (A3 (1));
    Discard (A4 (1));
-   Put_Line (Float'Image (Float (A1 (2)) * 10.0));
 end Foo;

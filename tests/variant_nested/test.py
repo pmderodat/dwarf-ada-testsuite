@@ -1,7 +1,7 @@
 from dwarf_tests import *
 
 
-gnatmake('foo.adb')
+build('foo.adb')
 cu, root = get_dwarf('foo.o')
 
 

@@ -1,7 +1,7 @@
 from dwarf_tests import *
 
 
-gnatmake('thinptr.adb')
+build('thinptr.adb')
 cu, root = get_dwarf('thinptr.o')
 
 
@@ -17,8 +17,8 @@ def make_litneg_expr(lit):
 
 # Get the array type referenced by the AA formal parameter: it's really a
 # constant typedef around a pointer to the array type.
-put_line = find_die(root, 'DW_TAG_subprogram', 'thinptr__put_line')
-aa_var = find_die(put_line, 'DW_TAG_formal_parameter', 'aa')
+discard = find_die(root, 'DW_TAG_subprogram', 'thinptr__discard')
+aa_var = find_die(discard, 'DW_TAG_formal_parameter', 'aa')
 
 prefixes, array_type = parse_type_prefixes(attr_die(cu, aa_var, 'DW_AT_type'))
 assert_eq(prefixes, ['DW_TAG_const_type'])

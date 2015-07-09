@@ -1,7 +1,7 @@
 from dwarf_tests import *
 
 
-gnatmake('bar.ads')
+build('bar.ads')
 cu, root = get_dwarf('bar.o')
 
 

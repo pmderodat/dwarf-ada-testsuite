@@ -1,7 +1,7 @@
 from dwarf_tests import *
 
 
-gnatmake('foo.adb')
+build('foo.adb')
 cu, root = get_dwarf('foo.o')
 
 record_type = find_die(root, 'DW_TAG_structure_type', 'foo__record_type')

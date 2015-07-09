@@ -1,13 +1,13 @@
 from dwarf_tests import *
 
 
-gnatmake('fatptr.adb')
+build('fatptr.adb')
 cu, root = get_dwarf('fatptr.o')
 
 
 # Get the array type referenced by the A formal parameter.
-put_line = find_die(root, 'DW_TAG_subprogram', 'fatptr__put_line')
-a_var = find_die(put_line, 'DW_TAG_formal_parameter', 'a')
+discard = find_die(root, 'DW_TAG_subprogram', 'fatptr__discard')
+a_var = find_die(discard, 'DW_TAG_formal_parameter', 'a')
 
 prefixes, array_type = parse_type_prefixes(attr_die(cu, a_var, 'DW_AT_type'))
 assert_eq(prefixes, ['DW_TAG_const_type'])

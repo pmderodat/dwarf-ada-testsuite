@@ -24,15 +24,21 @@ DW_AT_GNU_denominator = 0x2304
 DW_AT_GNU_bias = 0x2305
 
 
-def gnatmake(main):
+def build(source_file):
     """
-    Run gnatmake for minimal GNAT encodings on `main`.
+    Build some Ada source file with debug information and minimal GNAT
+    encodings. This should leave an object file in the current directory.
     """
-    subprocess.check_call(
-        ['gcc', '-c',
-         '-g', '-fgnat-encodings=minimal',
-         main]
-    )
+    args = ['-g', '-fgnat-encodings=minimal', source_file]
+    if 'GNAT1' in os.environ:
+        basename, ext = source_file.rsplit('.', 1)
+        assert ext in ('ads', 'adb')
+        asm_file = basename + '.s'
+        object_file = basename + '.o'
+        subprocess.check_call([os.environ['GNAT1'], '-o', asm_file] + args)
+        subprocess.check_call(['gcc', '-c', asm_file, '-o', object_file])
+    else:
+        subprocess.check_call(['gcc', '-c'] + args)
 
 
 def get_dwarf(elf):
