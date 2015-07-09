@@ -30,8 +30,11 @@ for var_name in ('r0', 'r2', 'r11'):
 # This should be true for the formal, too.
 r_var = find_die(foo, 'DW_TAG_formal_parameter', 'r')
 prefixes, r_type = parse_type_prefixes(attr_die(cu, r_var, 'DW_AT_type'))
-assert_eq((prefixes, r_type),
-          (['DW_TAG_const_type', 'DW_TAG_reference_type'], rec_type))
+assert_eq(prefixes[-1], 'DW_TAG_reference_type')
+# The reference type is always constant, but is also restricted with GCC 6
+assert_eq(set(prefixes[:-1]) | {'DW_TAG_restrict_type'},
+          {'DW_TAG_const_type', 'DW_TAG_restrict_type'})
+assert_eq(r_type, rec_type)
 
 
 # Now let's check that the structure is properly described: first the byte size

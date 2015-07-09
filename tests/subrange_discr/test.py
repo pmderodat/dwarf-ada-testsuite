@@ -16,8 +16,10 @@ r_param = find_die(root, 'DW_TAG_formal_parameter', 'r')
 r_param_type_prefixes, r_param_type = parse_type_prefixes(
     attr_die(cu, r_param, 'DW_AT_type')
 )
-assert_eq(r_param_type_prefixes, ['DW_TAG_const_type',
-                                  'DW_TAG_reference_type'])
+assert_eq(r_param_type_prefixes[-1], 'DW_TAG_reference_type')
+# The reference type is always constant, but is also restricted with GCC 6
+assert_eq(set(r_param_type_prefixes[:-1]) | {'DW_TAG_restrict_type'},
+          {'DW_TAG_const_type', 'DW_TAG_restrict_type'})
 assert_eq(r_param_type, record_type)
 
 # Check array type for A1

@@ -160,7 +160,8 @@ def parse_type_prefixes(die):
     while type_die.tag in ('DW_TAG_pointer_type',
                            'DW_TAG_reference_type',
                            'DW_TAG_const_type',
-                           'DW_TAG_volatile_type'):
+                           'DW_TAG_volatile_type',
+                           'DW_TAG_restrict_type'):
         prefixes.append(type_die.tag)
         type_die = attr_die(die.cu, type_die, 'DW_AT_type')
     return (prefixes, type_die)

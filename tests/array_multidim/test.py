@@ -10,7 +10,9 @@ discard = find_die(root, 'DW_TAG_subprogram', 'foo__discard')
 a_var = find_die(discard, 'DW_TAG_formal_parameter', 'a')
 
 prefixes, array_type = parse_type_prefixes(attr_die(cu, a_var, 'DW_AT_type'))
-assert_eq(prefixes, ['DW_TAG_const_type'])
+# The array type is always constant, but is also restricted with GCC 6
+assert_eq(set(prefixes) | {'DW_TAG_restrict_type'},
+          {'DW_TAG_const_type', 'DW_TAG_restrict_type'})
 assert_eq((array_type.tag, array_type.attributes['DW_AT_name'].value),
           ('DW_TAG_array_type', 'foo__array_type'))
 
