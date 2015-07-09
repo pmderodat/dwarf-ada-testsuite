@@ -45,7 +45,7 @@ def run_test(test_file):
 def main(args):
     test_list = args or (os.path.join('tests', d) for d in os.listdir('tests'))
     one_test_run = False
-    for child in test_list:
+    for child in sorted(test_list):
         test_file = os.path.join(child, 'test.py')
         if os.path.isfile(test_file):
             one_test_run = True
