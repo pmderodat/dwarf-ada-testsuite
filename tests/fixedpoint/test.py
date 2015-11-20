@@ -37,7 +37,7 @@ class SmallMatcher(object):
         assert_no_attr(base_type, 'DW_AT_decimal_scale')
 
         small = attr_die(cu, base_type, 'DW_AT_small')
-        assert_eq(small.tag, DW_TAG_GNU_rational_constant)
+        assert_eq(small.tag, 'DW_TAG_constant')
         assert_eq(small.attributes[DW_AT_GNU_numerator].value,
                   self.numerator)
         assert_eq(small.attributes[DW_AT_GNU_denominator].value,

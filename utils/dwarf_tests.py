@@ -18,7 +18,6 @@ def set_proc(processor):
 set_proc(os.environ.get('PROC', os.uname()[4]))
 
 
-DW_TAG_GNU_rational_constant = 0x410b
 DW_AT_GNU_numerator = 0x2303
 DW_AT_GNU_denominator = 0x2304
 DW_AT_GNU_bias = 0x2305
