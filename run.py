@@ -42,7 +42,16 @@ def run_test(test_file):
             print('\x1b[32mOK\x1b[0m:    {}'.format(test_name))
 
 
+def which(program):
+    return subprocess.check_output(['which', program]).strip()
+
+
 def main(args):
+    print('Using compiler: {}'.format(which(
+        os.environ['GNAT1']
+        if 'GNAT1' in os.environ else
+        'gcc'
+    )))
     test_list = args or (os.path.join('tests', d) for d in os.listdir('tests'))
     one_test_run = False
     for child in sorted(test_list):
