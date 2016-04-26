@@ -50,7 +50,7 @@ def check_fp_array(var_name,
     # Extract the floating-point type behind the array variable.
     var = find_die(root, 'DW_TAG_variable', var_name)
     prefixes, array_type = parse_type_prefixes(attr_die(cu, var, 'DW_AT_type'))
-    assert_eq(prefixes, ['DW_TAG_const_type'])
+    assert_in(prefixes, ([], ['DW_TAG_const_type']))
     assert_eq(array_type.tag, 'DW_TAG_array_type')
 
     # Check first the subrange.
