@@ -23,12 +23,12 @@ DW_AT_GNU_denominator = 0x2304
 DW_AT_GNU_bias = 0x2305
 
 
-def build(source_file):
+def build(source_file, cargs=None):
     """
     Build some Ada source file with debug information and minimal GNAT
     encodings. This should leave an object file in the current directory.
     """
-    args = ['-g', '-fgnat-encodings=minimal', source_file]
+    args = ['-g', '-fgnat-encodings=minimal', source_file] + (cargs or [])
     if 'GNAT1' in os.environ:
         basename, ext = source_file.rsplit('.', 1)
         assert ext in ('ads', 'adb')
