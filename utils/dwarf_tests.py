@@ -171,6 +171,51 @@ def peel_typedef(cu, die):
     return attr_die(cu, die, 'DW_AT_type')
 
 
+def attr_discr_list(die, discr_size, discr_signed):
+    try:
+        attr = die.attributes['DW_AT_discr_list']
+    except KeyError as exc:
+        raise KeyError('{} has no DW_AT_discr_list attribute'.format(
+            custom_str(die), attr_name
+        ))
+    assert attr.form.startswith('DW_FORM_block'), (
+        'Invalid/unsupported form for a discrimimant list: {}'.format(
+            attr.form
+        )
+    )
+
+    block = list(attr.value)
+    def read_leb128():
+        result = 0
+        shift = 0
+        while True:
+            byte = block.pop(0)
+            result = result | ((byte & 0x7f) << shift)
+            shift += 7
+            if not (byte & 0x80):
+                break
+
+        result &= 2**discr_size - 1
+        if discr_signed and result & 2**(discr_size - 1):
+            result |= -1 << discr_size
+
+        return result
+
+    print(attr)
+    result = []
+    while block:
+        descriptor = block.pop(0)
+        if descriptor == 0:
+            result.append(('DW_DSC_label', read_leb128()))
+        elif descriptor == 1:
+            low = read_leb128()
+            high = read_leb128()
+            result.append(('DW_DSC_range', low, high))
+        else:
+            assert False, ('Invalid descriptor: {}'.format(result))
+
+    return result
+
 
 class Match(object):
     """Class used to match patterns in DWARF expression: see match_expr."""
