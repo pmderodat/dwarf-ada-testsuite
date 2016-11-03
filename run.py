@@ -13,6 +13,11 @@ parser.add_argument(
     help='Optional list of paths for testcases to run. If not provided, all'
          ' testcases in the "tests" directory are run.'
 )
+parser.add_argument(
+    '--gnat1',
+    help="If provided, don't use `gcc` to build Ada material, but rather use"
+         " the provided gnat1 program"
+)
 
 
 # Move to the testsuite's root directory and setup paths
@@ -56,11 +61,16 @@ def which(program):
 
 
 def main(args):
+    # If provided, register --gnat1 in the environment so that testcases can
+    # use it.
+    if args.gnat1:
+        os.environ['GNAT1'] = os.path.expanduser(args.gnat1)
     print('Using compiler: {}'.format(which(
         os.environ['GNAT1']
         if 'GNAT1' in os.environ else
         'gcc'
     )))
+
     test_list = args.testcase or (os.path.join('tests', d)
                                   for d in os.listdir('tests'))
     one_test_run = False
