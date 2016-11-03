@@ -1,9 +1,18 @@
 #! /usr/bin/env python
 
+import argparse
 import os
 import os.path
 import subprocess
 import sys
+
+
+parser = argparse.ArgumentParser(description='Run the DWARF/Ada testsuite')
+parser.add_argument(
+    'testcase', nargs='*',
+    help='Optional list of paths for testcases to run. If not provided, all'
+         ' testcases in the "tests" directory are run.'
+)
 
 
 # Move to the testsuite's root directory and setup paths
@@ -52,7 +61,8 @@ def main(args):
         if 'GNAT1' in os.environ else
         'gcc'
     )))
-    test_list = args or (os.path.join('tests', d) for d in os.listdir('tests'))
+    test_list = args.testcase or (os.path.join('tests', d)
+                                  for d in os.listdir('tests'))
     one_test_run = False
     for child in sorted(test_list):
         test_file = os.path.join(child, 'test.py')
@@ -64,6 +74,6 @@ def main(args):
 
 if __name__ == '__main__':
     try:
-        main(sys.argv[1:])
+        main(parser.parse_args())
     except KeyboardInterrupt:
         sys.exit(1)
