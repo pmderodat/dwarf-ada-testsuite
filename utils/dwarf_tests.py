@@ -228,6 +228,57 @@ class Match(object):
     def __repr__(self):
         return 'Match({})'.format(self.name)
 
+
+class Or(object):
+    """
+    Class used to match at least one of several DWARF operations:
+    see match_expr.
+    """
+
+    def __init__(self, *alternatives):
+        self.alternatives = alternatives
+
+    def __repr__(self):
+        return 'Or({})'.format(', '.join(str(a for a in self.alternatives)))
+
+
+def match_op(i, got_op, pattern):
+    """
+    Helper for match_expr: match a single DWARF operation.
+
+    Return new matches on success and raise a ValueError on failure.
+    """
+    if not isinstance(pattern, Or):
+        pattern = Or(pattern)
+
+    for pattern_op in pattern.alternatives:
+        matches = {}
+        if len(got_op) != len(pattern_op) or got_op[0] != pattern_op[0]:
+            continue
+
+        error = False
+        for got_arg, pattern_arg in zip(got_op, pattern_op):
+            if isinstance(pattern_arg, Match):
+                matches[pattern_arg.name] = got_arg
+            elif got_arg != pattern_arg:
+                error = True
+                break
+        if not error:
+            return matches
+
+    raise ValueError(
+        'Could not match operation {}:'
+        '\n  Got: {}'
+        '\n  But one of the following was expected:'
+        '{}'.format(
+            i,
+            got_op,
+            ''.join('\n    * {}'.format(p)
+                    for p in pattern.alternatives)
+        )
+    )
+
+
 def match_expr(expr, pattern):
     """
     Match a DWARF expression against the input pattern. Raise a ValueError when
@@ -247,18 +298,7 @@ def match_expr(expr, pattern):
                          ' ({} expected)'.format(len(expr), len(pattern)))
     for i, (got_op, pattern_op) in enumerate(
             zip(expr, pattern)):
-        error = len(got_op) != len(pattern_op) or got_op[0] != pattern_op[0]
-        if not error:
-            for got_arg, pattern_arg in zip(got_op, pattern_op):
-                if isinstance(pattern_arg, Match):
-                    matches[pattern_arg.name] = got_arg
-                elif got_arg != pattern_arg:
-                    error = True
-                    break
-        if error:
-            raise ValueError('Could not match operation {}:'
-                             ' got {} ({} expected)'.format(
-                                 i, got_op, pattern_op))
+        matches.update(match_op(i, got_op, pattern_op))
     return matches
 
 

@@ -52,16 +52,16 @@ matches = match_expr(attr_expr(cu, rec_type, 'DW_AT_byte_size'),
                       ('DW_OP_and', )])
 dwarf_proc = find_die_by_offset(cu, matches['call'])
 assert_eq(dwarf_proc.tag, 'DW_TAG_dwarf_procedure')
-assert_eq(attr_expr(cu, dwarf_proc, 'DW_AT_location'),
-          [('DW_OP_pick', 0),
-           ('DW_OP_lit0', ),
-           ('DW_OP_ne', ),
-           ('DW_OP_bra', 4),
-           ('DW_OP_lit0', ),
-           ('DW_OP_skip', 1),
-           ('DW_OP_lit4', ),
-           ('DW_OP_swap', ),
-           ('DW_OP_drop', )])
+match_expr(attr_expr(cu, dwarf_proc, 'DW_AT_location'),
+           [Or(('DW_OP_pick', 0), ('DW_OP_dup', )),
+            ('DW_OP_lit0', ),
+            ('DW_OP_ne', ),
+            ('DW_OP_bra', 4),
+            ('DW_OP_lit0', ),
+            ('DW_OP_skip', 1),
+            ('DW_OP_lit4', ),
+            ('DW_OP_swap', ),
+            ('DW_OP_drop', )])
 
 i_fld, b_fld, var_part = die_children(rec_type)
 
