@@ -34,7 +34,9 @@ def build(source_file, cargs=None):
         assert ext in ('ads', 'adb')
         asm_file = basename + '.s'
         object_file = basename + '.o'
-        subprocess.check_call([os.environ['GNAT1'], '-o', asm_file] + args)
+        subprocess.check_call(
+            [os.environ['GNAT1'], '-quiet', '-o', asm_file] + args
+        )
         subprocess.check_call(['gcc', '-c', asm_file, '-o', object_file])
     else:
         subprocess.check_call(['gcc', '-c'] + args)
