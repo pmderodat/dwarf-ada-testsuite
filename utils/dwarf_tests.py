@@ -37,9 +37,10 @@ def build(source_file, cargs=None):
         subprocess.check_call(
             [os.environ['GNAT1'], '-quiet', '-o', asm_file] + args
         )
-        subprocess.check_call(['gcc', '-c', asm_file, '-o', object_file])
+        subprocess.check_call(['gcc', '-c', asm_file, '-o', object_file,
+                               '-gz=none'])
     else:
-        subprocess.check_call(['gcc', '-c'] + args)
+        subprocess.check_call(['gcc', '-c'] + args + ['-gz=none'])
 
 
 def get_dwarf(elf):
